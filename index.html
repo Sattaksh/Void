@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VoidSearch</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="navbar">
+  <div class="nav-content">
+    <div class="logo-group">
+      <h1 class="logo">VoidSearch</h1>
+      <p class="credit-text">- Made by Sattaksh Ratan with ChatGPT</p>
+    </div>
+    <button id="themeToggle" class="theme-toggle">🌓</button>
+  </div>
+
+</header>
+
+  <main class="main-content">
+    <section class="search-section">
+      <div class="search-container">
+        <input type="text" id="searchBox" placeholder="Ask me anything..." />
+        <div class="buttons">
+          <button id="searchBtn">🔍</button>
+          <div class="voice-wrapper">
+            <button id="voiceBtn">🎙️</button>
+            <span id="speakPrompt" class="fade-text">Speak!</span>
+          </div>
+        </div>
+        <ul id="suggestions" class="suggestions-list"></ul>
+      </div>
+    </section>
+
+    <section class="results-section">
+      <div id="loading" class="loading">Searching...</div>
+      <div id="results"></div>
+    </section>
+
+    <section class="history-section">
+      <h3>Recent Searches</h3>
+      <ul id="history" class="history-list"></ul>
+      <button id="clearHistory" class="clear-btn">🗑️ Clear History</button>
+    </section>
+  </main>
+
+  <button id="backToTop" class="back-to-top">⬆️</button>
+  <script src="script.js"></script>
+</body>
+</html>
