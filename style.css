@@ -104,6 +104,13 @@ body {
   flex-direction: column;
   align-items: center;
   position: relative;
+
+}
+.search-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 600px;
 }
 
 #searchBox {
@@ -116,6 +123,24 @@ body {
   outline: none;
   transition: box-shadow 0.3s ease;
 }
+
+#clearBtn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--muted);
+  cursor: pointer;
+  display: none; /* initially hidden */
+}
+
+#clearBtn:hover {
+  color: var(--accent);
+}
+
 #searchBox:focus {
   box-shadow: 0 0 8px var(--accent);
 }
@@ -327,4 +352,52 @@ body.dark .suggestion-link {
 @keyframes fadeInDown {
   from { opacity: 0; transform: translateY(-15px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.wiki-summary span {
+  transition: opacity 0.3s ease;
+}
+.toggle-summary {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: var(--accent);
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.extra-summary {
+  margin-top: 1rem;
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.read-more-btn, .collapse-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.92rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  text-decoration: underline;
+  transition: color 0.3s;
+}
+
+.read-more-btn:hover,
+.collapse-btn:hover {
+  color: #2563eb;
+}
+
+
+
+#expandedContent {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-top: 1rem;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
