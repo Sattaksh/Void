@@ -63,13 +63,22 @@ clearBtn.addEventListener("click", () => {
   searchBox.addEventListener("keypress", e => e.key === "Enter" && triggerSearch(searchBox.value.trim()));
 
   function triggerSearch(term) {
-    if (!term) return;
-    suggUL.innerHTML = "";
-    saveHistory(term);
-    fetchAll(term)
-    detectAndFetchCricketMatch(term)
-    detectAndFetchCricketPlayer(term);
+  if (!term) return;
+  suggUL.innerHTML = "";
+  saveHistory(term);
+  fetchAll(term);
+  detectAndFetchCricketMatch(term);
+  detectAndFetchCricketPlayer(term);
+
+  // 📚 Optional: Only run book API if term seems like a book
+  const lowerTerm = term.toLowerCase();
+  const bookKeywords = ["book", "novel", "by", "author", "volume", "literature"];
+  const isBookSearch = bookKeywords.some(k => lowerTerm.includes(k));
+
+  if (isBookSearch) {
+    detectAndFetchBook(term);
   }
+}
 
   // 📦 Fetch Wikipedia + Entity + YouTube + News
 function classifyAndEnhance(title, summary) {
@@ -258,7 +267,9 @@ if (enhance) {
   const img = d.thumbnail?.source ? `<img src="${d.thumbnail.source}" alt="${d.title}">` : "";
   return `
     <div class="card">
-      <h2>${d.title || term}</h2>
+      <h2>${d.title || term}
+        <button class="speak-btn" data-title="${encodeURIComponent(d.title)}" title="Read aloud">🔊</button>
+      </h2>
       <p class="wiki-summary">${d.extract || "No summary available."}</p>
       ${img}
       <div class="wiki-expand-control">
@@ -270,6 +281,40 @@ if (enhance) {
     </div>
   `;
 }
+  async function detectAndFetchBook(term) {
+  try {
+    const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(term)}`);
+    const data = await res.json();
+
+    if (data.totalItems > 0 && data.items) {
+      const book = data.items.find(b => b.volumeInfo?.description || b.searchInfo?.textSnippet) || data.items[0];
+      const info = book.volumeInfo;
+      const snippet = book.searchInfo?.textSnippet;
+
+      const title = info.title || term;
+      const authors = info.authors ? info.authors.join(", ") : "Unknown author";
+      const description = info.description || snippet || "No description available.";
+      const thumbnail = info.imageLinks?.thumbnail || "";
+      const previewLink = info.previewLink || "#";
+
+      const bookCard = `
+        <div class="card">
+          <h2>📚 ${title}</h2>
+          <p><strong>Author(s):</strong> ${authors}</p>
+          <p>${description}</p>
+          ${thumbnail ? `<img src="${thumbnail}" alt="Book Cover">` : ""}
+          <br><a href="${previewLink}" target="_blank">🔗 Preview Book</a>
+        </div>
+      `;
+
+      results.innerHTML += bookCard;
+    }
+  } catch (err) {
+    console.error("Book API failed", err);
+  }
+}
+//here brahhhhhhhh sattaksh
+
 
 
 
@@ -487,27 +532,34 @@ async function suggestCorrection(term) {
 
 
   // 🕘 Save and render search history
-  function saveHistory(t) {
-    let h = JSON.parse(localStorage.searchHistory || "[]").filter(x => x !== t);
-    h.unshift(t); if (h.length > 10) h.pop();
-    localStorage.searchHistory = JSON.stringify(h);
-    renderHistory(); 
-    clearHist.onclick = () => {
-      localStorage.removeItem("searchHistory");
-      renderHistory();
-    };
-    
-  }
+  // 🕘 Save search history
+function saveHistory(t) {
+  let h = JSON.parse(localStorage.searchHistory || "[]").filter(x => x !== t);
+  h.unshift(t);
+  if (h.length > 10) h.pop();
+  localStorage.searchHistory = JSON.stringify(h);
+  renderHistory(); 
+}
 
-  function renderHistory() {
-    const h = JSON.parse(localStorage.searchHistory || "[]");
-    historyUL.innerHTML = h.map(t => `<li>${t}</li>`).join("");
-    [...historyUL.children].forEach(li => li.onclick = () => {
-      searchBox.value = li.textContent;
-      triggerSearch(li.textContent);
-    });
-  }
+// 🧾 Render history
+function renderHistory() {
+  const h = JSON.parse(localStorage.searchHistory || "[]");
+  historyUL.innerHTML = h.map(t => `<li>${t}</li>`).join("");
+  [...historyUL.children].forEach(li => li.onclick = () => {
+    searchBox.value = li.textContent;
+    triggerSearch(li.textContent);
+  });
+}
+
+// ✅ Bind the Clear History button once at the top level
+clearHist.onclick = () => {
+  localStorage.removeItem("searchHistory");
   renderHistory();
+};
+
+// 🔁 Render on page load
+renderHistory();
+
 
   // ✍️ Autocomplete with better UI behavior
 searchBox.addEventListener("input", () => {
@@ -594,7 +646,7 @@ document.addEventListener("click", async (e) => {
 
       const htmlContent = data.parse?.text["*"];
       const doc = new DOMParser().parseFromString(htmlContent, "text/html");
-      const paragraphs = [...doc.querySelectorAll("p")].slice(0, 6); // 4 paras
+      const paragraphs = [...doc.querySelectorAll("p")].slice(0,6); // 4 paras
 
       expandedDiv.innerHTML = paragraphs.map(p => `<p>${p.textContent}</p>`).join("");
       expandedDiv.style.display = "block";
@@ -617,6 +669,40 @@ document.addEventListener("click", async (e) => {
 });
 
 
+// 🔁 On page load, render history if available
+document.addEventListener("DOMContentLoaded", () => {
+  renderHistory();
+});
 
+// 🔊 Handle 'Read the article' speak button
+// 🔊 Speak full Wikipedia extract when clicking "Read the article" button
+document.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("speak-btn")) {
+    e.stopPropagation(); // Prevent global click from cancelling immediately
 
+    const title = e.target.dataset.title;
+    if (!title) return;
+
+    try {
+      const res = await fetch(`https://en.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&explaintext=true&titles=${title}&origin=*`);
+      const data = await res.json();
+      const page = Object.values(data.query.pages)[0];
+      const fullText = page.extract;
+
+      if ('speechSynthesis' in window) {
+        speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(fullText);
+        utterance.lang = "en-US";
+        speechSynthesis.speak(utterance);
+      }
+    } catch (err) {
+      console.error("Speech fetch failed:", err);
+    }
+  } else {
+    // Stop speech if clicked anywhere else
+    if ('speechSynthesis' in window) {
+      speechSynthesis.cancel();
+    }
+  }
+});
 
