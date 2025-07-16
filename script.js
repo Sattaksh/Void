@@ -19,9 +19,7 @@ clearBtn.addEventListener("click", () => {
   const suggUL = q("suggestions"), results = q("results"), loading = q("loading");
   const historyUL = q("history"), clearHist = q("clearHistory"), themeTgl = q("themeToggle"), back2Top = q("backToTop");
   
-  // 🔑 API Keys — INSERT YOURS HERE
-  const YOUTUBE_API_KEY = 'AIzaSyBK4QCF1YFeGXCUNziWQI_md6O-QQw_q9E';
-
+  
   // 🌗 Dark mode
   if (localStorage.theme === "dark") document.body.classList.add("dark");
   themeTgl.onclick = () => {
@@ -72,7 +70,7 @@ searchBox.addEventListener("keypress", e => {
   loading.classList.add("show");
 
   const questionWords = ["is", "what", "how", "why", "would", "define", "if", "are", "can", "could", "should", 
-    "when", "who", "?", "write", "review", "summary", "give", "will", "where"];
+    "when", "who", "?", "write", "review", "summary", "give", "will", "where", "was"];
   const firstWord = term.split(" ")[0].toLowerCase();
 
   // 🤖 Smart AI Q&A
@@ -104,9 +102,7 @@ searchBox.addEventListener("keypress", e => {
 
   // 📚 Normal search flow
   await fetchAll(term);
-  detectAndFetchCricketMatch(term);
-  detectAndFetchCricketPlayer(term);
-
+  
   const lowerTerm = term.toLowerCase();
   const bookKeywords = ["book", "novel", "by", "author", "volume", "literature"];
   const isBookSearch = bookKeywords.some(k => lowerTerm.includes(k));
@@ -277,14 +273,10 @@ if (enhance) {
     }
 
     // 🔧 FETCH all in parallel (NO aiHTML here!)
-    const [ytHTML, cricketHTML, matchHTML] = await Promise.all([
+    const [ytHTML] = await Promise.all([
       fetchYouTube(term),
-      fetchCricketData(term),
-      detectAndFetchCricketMatch(term)
     ]);
 
-    if (cricketHTML) results.innerHTML += cricketHTML;
-    if (matchHTML) results.innerHTML += matchHTML;
     if (ytHTML) results.innerHTML += ytHTML;
 
   } catch (err) {
@@ -366,57 +358,24 @@ if (enhance) {
 //here brahhhhhhhh sattaksh
 
 
-  async function fetchAIAnswer(question) {
-  const apiKey = "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";  // 👈 One key to rule them all
+  // script.js
 
-  const models = [
-    "mistralai/mistral-7b-instruct:free",
-    "tngtech/deepseek-r1t-chimera:free",
-    "deepseek/deepseek-chat-v3-0324:free",
-    "deepseek/deepseek-v3-base:free",
-    "mistralai/mistral-small-3.1-24b-instruct:free",
-    "mistralai/mistral-7b-instruct"
-    // add more models as you want
-  ];
-
-  const apiUrl = "https://openrouter.ai/api/v1/chat/completions";
-
-  for (const model of models) {
+async function fetchAIAnswer(question) {
     try {
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "HTTP-Referer": "https://sattaksh.github.io/Void/",
-          "X-Title": "VoidSearch"
-        },
-        body: JSON.stringify({
-          model,
-          messages: [
-            { role: "system", content: "You are a helpful and concise assistant." },
-            { role: "user", content: question }
-          ]
-        })
-      });
-
-      const data = await response.json();
-
-      if (data?.choices?.[0]?.message?.content) {
-        console.log(`✅ Answer from model: ${model}`);
-        return data.choices[0].message.content.trim();
-      }
-
-      console.warn(`❌ Model failed: ${model}`, data);
-
+        const response = await fetch("http://localhost:3000/api/ask-ai", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question }) // Only send the question
+        });
+        const data = await response.json();
+        if (data?.choices?.[0]?.message?.content) {
+            return data.choices[0].message.content.trim();
+        }
     } catch (err) {
-      console.error(`🔥 Error with model ${model}:`, err.message);
+        console.error("Error fetching AI answer from server:", err.message);
     }
-  }
-
-  return "❌ Sorry, none of our AI models could answer your question right now.";
+    return "❌ Sorry, the AI could not answer your question right now.";
 }
-
 
 
 
@@ -428,176 +387,33 @@ if (enhance) {
 
 
   // 🎥 Fetch YouTube Results
-  async function fetchYouTube(term) {
-    try {
-      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(term)}&type=video&maxResults=3&key=${YOUTUBE_API_KEY}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (!data.items) throw "No YouTube results";
+ // script.js
 
-      return `
+async function fetchYouTube(term) {
+    try {
+        // 👇 This now calls YOUR server, not YouTube directly
+        const url = `http://localhost:3000/api/youtube?q=${encodeURIComponent(term)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!data.items) throw "No YouTube results";
+
+        return `
         <div class="card">
-          <h3>🎥 Related Videos</h3>
-          <ul>
-            ${data.items.map(v => `
-              <li>
-                <a href="https://www.youtube.com/watch?v=${v.id.videoId}" target="_blank">
-                  ${v.snippet.title}
-                </a>
-              </li>`).join("")}
-          </ul>
+            <h3>🎥 Related Videos</h3>
+            <ul>
+                ${data.items.map(v => `
+                    <li>
+                        <a href="http://googleusercontent.com/youtube.com/6{v.id.videoId}" target="_blank">
+                            ${v.snippet.title}
+                        </a>
+                    </li>`).join("")}
+            </ul>
         </div>`;
     } catch {
-      return "";
+        return "";
     }
-  }
-  
-async function fetchCricketData(term) {
-  const CRICKETDATA_API_KEY = '1aa8107e-869b-4a0f-92bd-4b562c00aa3a';
-  let html = "";
+} 
 
-  try {
-    // 1️⃣ Fetch all players and find the closest match using partial term matching
-    const searchURL = `https://api.cricapi.com/v1/players?apikey=${CRICKETDATA_API_KEY}&offset=0`;
-    const searchRes = await fetch(searchURL);
-    const searchData = await searchRes.json();
-    const players = searchData.data || [];
-
-    const matched = players.find(p => {
-      const name = p.name?.toLowerCase() || "";
-      return term.toLowerCase().split(" ").some(word => name.includes(word));
-    });
-
-    if (matched) {
-      const playerURL = `https://api.cricapi.com/v1/players_info?apikey=${CRICKETDATA_API_KEY}&offset=0&id=${matched.id}`;
-      const playerRes = await fetch(playerURL);
-      const playerData = await playerRes.json();
-      const p = playerData.data;
-
-      html += `
-        <div class="card">
-          <h3>🏏 Player: ${p.name}</h3>
-          <p><strong>Country:</strong> ${p.country}</p>
-          <p><strong>Born:</strong> ${p.dateOfBirth}</p>
-          <p><strong>Role:</strong> ${p.role}</p>
-          <p><strong>Batting:</strong> ${p.battingStyle} | <strong>Bowling:</strong> ${p.bowlingStyle}</p>
-        </div>`;
-    }
-
-    // 2️⃣ Fetch live matches and check if any loosely match the search term
-    const matchListRes = await fetch(`https://api.cricapi.com/v1/currentMatches?apikey=${CRICKETDATA_API_KEY}`);
-    const matchList = await matchListRes.json();
-    const matches = matchList.data || [];
-
-    const relevant = matches.filter(m =>
-      term.toLowerCase().split(" ").some(word =>
-        m.name?.toLowerCase().includes(word)
-      )
-    );
-
-    for (const match of relevant.slice(0, 2)) {
-      const matchDetailURL = `https://api.cricapi.com/v1/match_info?apikey=${CRICKETDATA_API_KEY}&offset=0&id=${match.id}`;
-      const matchRes = await fetch(matchDetailURL);
-      const matchData = await matchRes.json();
-      const m = matchData.data;
-      const teams = m.teams?.join(" vs ") || m.name;
-      const scores = m.score?.map(s => `<li>${s.inning}: ${s.runs}/${s.wickets} in ${s.overs} overs</li>`).join("") || "No scores available.";
-
-      html += `
-        <div class="card">
-          <h3>📺 ${teams}</h3>
-          <p><strong>Status:</strong> ${m.status}</p>
-          <ul>${scores}</ul>
-        </div>`;
-    }
-
-    return ""; // <- don’t show anything if it failed
-
-  } catch (err) {
-    console.error("Cricket API Error:", err);
-    return "<p>Error fetching cricket data.</p>";
-  }
-}
-async function detectAndFetchCricketMatch(term) {
-  const cricketTerms = ["vs", "ipl", "t20", "odi", "test", "cricket", "match"];
-  const isMatch = cricketTerms.some(t => term.toLowerCase().includes(t));
-  if (!isMatch) return;
-
-  try {
-    const matchesRes = await fetch(`https://api.cricapi.com/v1/currentMatches?apikey=1aa8107e-869b-4a0f-92bd-4b562c00aa3a&offset=0`);
-    const matches = (await matchesRes.json()).data || [];
-
-    const match = matches.find(m => {
-      const teams = (m.teams || []).map(t => t.toLowerCase()).join(" ");
-      const name = (m.name || "").toLowerCase();
-      return name.includes(term.toLowerCase()) || teams.includes(term.toLowerCase());
-    });
-
-    if (!match) {
-    console.info("No matching live cricket match found.");
-    return;
-  }
-    const scoreRes = await fetch(`https://api.cricapi.com/v1/match_info?apikey=1aa8107e-869b-4a0f-92bd-4b562c00aa3a&id=${match.id}`);
-    const scoreData = await scoreRes.json();
-
-    const score = scoreData.data.score || [];
-    const teams = scoreData.data.teams?.join(" vs ") || match.name;
-    const status = scoreData.data.status || "Status not available";
-
-    results.innerHTML += `
-      <div class="card">
-        <h3>🏏 Live Cricket Score</h3>
-        <strong>${teams}</strong><br>
-        <p>${status}</p>
-        ${score.map(s => `<p><strong>${s.inning}</strong>: ${s.r}/${s.w} in ${s.o} overs</p>`).join("")}
-      </div>
-    `;
-  } catch {
-    results.innerHTML += "<div class='card'><p>Error loading cricket score.</p></div>";
-  }
-}
-
-
-async function detectAndFetchCricketPlayer(term) {
-  try {
-    const searchUrl = `https://api.cricapi.com/v1/players?apikey=1aa8107e-869b-4a0f-92bd-4b562c00aa3a&offset=0&search=${encodeURIComponent(term)}`;
-    const searchRes = await fetch(searchUrl);
-    const searchData = await searchRes.json();
-
-    if (!searchData.data || !searchData.data.length) return;
-
-    const player = searchData.data[0];
-    const playerId = player.id;
-
-    const infoUrl = `https://api.cricapi.com/v1/players_info?apikey=1aa8107e-869b-4a0f-92bd-4b562c00aa3a&id=${playerId}`;
-    const infoRes = await fetch(infoUrl);
-    const infoData = await infoRes.json();
-    const d = infoData.data;
-
-    // Check for essential info before rendering
-    if (!d.name || !d.country) return;
-
-    const teams = Array.isArray(d.teams) ? d.teams.join(", ") : "-";
-
-    const cardHTML = `
-      <div class="card">
-        <h3>🏏 Player Info: ${d.name}</h3>
-        ${d.playerImg ? `<img src="${d.playerImg}" alt="${d.name}" style="width: 100px; border-radius: 8px;">` : ""}
-        <p><strong>Country:</strong> ${d.country}</p>
-        <p><strong>Date of Birth:</strong> ${d.dateOfBirth || "-"}</p>
-        <p><strong>Role:</strong> ${d.role || "-"}</p>
-        <p><strong>Batting Style:</strong> ${d.battingStyle || "-"}</p>
-        <p><strong>Bowling Style:</strong> ${d.bowlingStyle || "-"}</p>
-        <p><strong>Teams:</strong> ${teams}</p>
-      </div>
-    `;
-
-    results.innerHTML += cardHTML;
-
-  } catch (err) {
-    console.warn("Failed to fetch cricket player info:", err);
-  }
-}
 async function suggestCorrection(term) {
   console.log("✅ suggestCorrection() triggered for:", term);
 

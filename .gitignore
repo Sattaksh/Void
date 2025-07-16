@@ -1,0 +1,5 @@
+# Ignore the file containing our secret API keys
+.env
+
+# Ignore the folder with all the installed Node.js packages
+node_modules
