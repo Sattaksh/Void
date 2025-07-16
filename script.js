@@ -60,25 +60,73 @@ clearBtn.addEventListener("click", () => {
 
   // 🔍 Trigger search
   searchBtn.onclick = () => triggerSearch(searchBox.value.trim());
-  searchBox.addEventListener("keypress", e => e.key === "Enter" && triggerSearch(searchBox.value.trim()));
+searchBox.addEventListener("keypress", e => {
+  if (e.key === "Enter") triggerSearch(searchBox.value.trim());
+});
 
-  function triggerSearch(term) {
+  async function triggerSearch(term) {
   if (!term) return;
   suggUL.innerHTML = "";
   saveHistory(term);
-  fetchAll(term);
+  results.innerHTML = "";
+  loading.classList.add("show");
+
+  const questionWords = ["is", "what", "how", "why", "would", "define", "if", "are", "can", "could", "should", 
+    "when", "who", "?", "write", "review", "summary", "give", "will", "where"];
+  const firstWord = term.split(" ")[0].toLowerCase();
+
+  // 🤖 Smart AI Q&A
+  if (questionWords.includes(firstWord)) {
+    const aiAnswer = await fetchAIAnswer(term);
+    if (aiAnswer) {
+      const formattedAnswer = formatAIAnswer(aiAnswer);
+
+      results.innerHTML = `
+        <div class="card ai-answer-card">
+          <div class="ai-card-header">
+            <h3>✦︎ VoidAI</h3>
+            <span class="copy-btn" title="Copy Answer">🗒</span>
+          </div>
+          <div id="ai-answer-text">${formattedAnswer}</div>
+        </div>
+      `;
+
+      document.querySelector(".copy-btn").onclick = () => {
+        const text = document.getElementById("ai-answer-text").innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          alert("AI answer copied to clipboard!");
+        });
+      };
+      loading.classList.remove("show");
+      return; // ✅ Skip wiki, cricket, book, etc.
+    }
+  } //
+
+  // 📚 Normal search flow
+  await fetchAll(term);
   detectAndFetchCricketMatch(term);
   detectAndFetchCricketPlayer(term);
 
-  // 📚 Optional: Only run book API if term seems like a book
   const lowerTerm = term.toLowerCase();
   const bookKeywords = ["book", "novel", "by", "author", "volume", "literature"];
   const isBookSearch = bookKeywords.some(k => lowerTerm.includes(k));
+  if (isBookSearch) detectAndFetchBook(term);
 
-  if (isBookSearch) {
-    detectAndFetchBook(term);
-  }
+  loading.classList.remove("show");
 }
+
+function formatAIAnswer(text) {
+  const escaped = text
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  const withLineBreaks = escaped.replace(/\n/g, "<br>");
+  const withBold = withLineBreaks.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  const withItalics = withBold.replace(/\*(.*?)\*/g, "<em>$1</em>");
+  return withItalics;
+}
+
+
+
 
   // 📦 Fetch Wikipedia + Entity + YouTube + News
 function classifyAndEnhance(title, summary) {
@@ -116,7 +164,9 @@ async function fetchAll(term) {
 
 
   try {
-    const wikiURL = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(term.replace(/\s+/g, "_"))}`;
+    const cleanTerm = term.replace(/\?/g, "").trim();
+    const wikiURL = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(cleanTerm)}`;
+
     const wikiRes = await fetch(wikiURL);
     if (!wikiRes.ok) throw "Wiki Not Found";
     const wikiData = await wikiRes.json();
@@ -316,6 +366,59 @@ if (enhance) {
 //here brahhhhhhhh sattaksh
 
 
+  async function fetchAIAnswer(question) {
+  const apiKey = "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";  // 👈 One key to rule them all
+
+  const models = [
+    "mistralai/mistral-7b-instruct:free",
+    "tngtech/deepseek-r1t-chimera:free",
+    "deepseek/deepseek-chat-v3-0324:free",
+    "deepseek/deepseek-v3-base:free",
+    "mistralai/mistral-small-3.1-24b-instruct:free",
+    "mistralai/mistral-7b-instruct"
+    // add more models as you want
+  ];
+
+  const apiUrl = "https://openrouter.ai/api/v1/chat/completions";
+
+  for (const model of models) {
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://sattaksh.github.io/Void/",
+          "X-Title": "VoidSearch"
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: "You are a helpful and concise assistant." },
+            { role: "user", content: question }
+          ]
+        })
+      });
+
+      const data = await response.json();
+
+      if (data?.choices?.[0]?.message?.content) {
+        console.log(`✅ Answer from model: ${model}`);
+        return data.choices[0].message.content.trim();
+      }
+
+      console.warn(`❌ Model failed: ${model}`, data);
+
+    } catch (err) {
+      console.error(`🔥 Error with model ${model}:`, err.message);
+    }
+  }
+
+  return "❌ Sorry, none of our AI models could answer your question right now.";
+}
+
+
+
 
 
 
@@ -453,6 +556,7 @@ async function detectAndFetchCricketMatch(term) {
     results.innerHTML += "<div class='card'><p>Error loading cricket score.</p></div>";
   }
 }
+
 
 async function detectAndFetchCricketPlayer(term) {
   try {
