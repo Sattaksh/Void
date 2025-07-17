@@ -116,64 +116,18 @@ searchBox.addEventListener("keypress", e => {
   loading.classList.remove("show");
 }
 
-// In script.js
 
-function formatTable(text) {
-    // This regular expression looks for lines that start and end with a pipe |
-    const tableRegex = /(\|.*\|)/g;
-    const isTable = text.includes('|') && text.includes('-');
-
-    if (!isTable) {
-        return text; // If it's not a table, return the text as is.
-    }
-
-    let html = '<table>';
-    const rows = text.trim().split('\n');
-
-    rows.forEach((row, index) => {
-        // Ignore the separator line like |---|---|
-        if (row.includes('---')) return;
-
-        // Split each row into cells based on the | divider
-        const cells = row.split('|').map(cell => cell.trim()).filter(cell => cell);
-        
-        if (cells.length > 0) {
-            html += '<tr>';
-            cells.forEach(cell => {
-                // The first row is the table header (th), the rest are data cells (td)
-                if (index === 0) {
-                    html += `<th>${cell}</th>`;
-                } else {
-                    html += `<td>${cell}</td>`;
-                }
-            });
-            html += '</tr>';
-        }
-    });
-
-    html += '</table>';
-    return html;
-}
-
-// In script.js
 
 function formatAIAnswer(text) {
-    // --- THIS IS THE NEW PART ---
-    // First, we try to format any tables in the text.
-    let formattedText = formatTable(text);
-    // --- END OF THE NEW PART ---
-
-    // All your existing formatting rules will now run on the result.
-    // If a table was found, this will ignore it. If not, it will format the text.
-    const escaped = formattedText
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-    const withLineBreaks = escaped.replace(/\n/g, "<br>");
-    const withBold = withLineBreaks.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-    const withItalics = withBold.replace(/\*(.*?)\*/g, "<em>$1</em>");
-    
-    return withItalics;
+  const escaped = text
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  const withLineBreaks = escaped.replace(/\n/g, "<br>");
+  const withBold = withLineBreaks.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  const withItalics = withBold.replace(/\*(.*?)\*/g, "<em>$1</em>");
+  return withItalics;
 }
+
 
 
 

@@ -497,26 +497,7 @@ body.dark .suggestion-link {
   line-height: 1;
 }
 
-/* In style.css */
 
-#ai-answer-text table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-#ai-answer-text th, 
-#ai-answer-text td {
-  border: 1px solid var(--muted);
-  padding: 0.75rem;
-  text-align: left;
-}
-
-#ai-answer-text th {
-  background-color: var(--bg);
-  font-weight: bold;
-}
 
 @keyframes fadeInSlide {
   from {
