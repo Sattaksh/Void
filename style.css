@@ -453,19 +453,41 @@ body.dark .suggestion-link {
   content: "🤖 ";
 }
 
+/* Replace your old .ai-card-header style with this block */
+
 .ai-card-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start; /* Align items to the top */
+  margin-bottom: 25px;      /* Creates space for the "Copied!" text below */
 }
 
+/* This new container will hold the button and the feedback */
 .copy-container {
-  position: relative;
-  display: flex;
-  align-items: center;
+  position: relative;      /* This is crucial for positioning the text below */
+  text-align: right;       /* Aligns the button to the right */
 }
 
-/* This styles the button itself */
+/* This positions the "Copied!" text directly below the button */
+.copy-feedback {
+  position: absolute;
+  top: 100%;             /* Position it right below the container */
+  right: 0;              /* Align it with the right edge */
+  margin-top: 5px;       /* Add a small gap */
+  
+  font-size: 0.9rem;
+  color: var(--muted);
+  white-space: nowrap;   /* Prevent text from wrapping */
+  animation: fadeInOut 2s ease-in-out forwards;
+}
+
+/* Make sure you have this animation keyframe rule in your CSS */
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
 .copy-btn {
   cursor: pointer;
   font-size: 1.2rem;
@@ -504,27 +526,7 @@ body.dark .suggestion-link {
   line-height: 1;
 }
 
-/* In style.css */
 
-/* Style for the new "Copied!" text */
-.copy-feedback {
-  /* Position it absolutely next to the button */
-  position: absolute;
-  left: 100%; /* Start it at the right edge of the container */
-  margin-left: 10px; /* Add some space */
-  
-  font-size: 0.9rem;
-  color: var(--muted);
-  white-space: nowrap; /* Prevent it from wrapping to a new line */
-  animation: fadeInOut 2s ease-in-out forwards;
-}
-/* Animation to fade the text in and out */
-@keyframes fadeInOut {
-  0% { opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { opacity: 0; }
-}
 
 @keyframes fadeInSlide {
   from {

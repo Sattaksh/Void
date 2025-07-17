@@ -85,35 +85,40 @@ searchBox.addEventListener("keypress", e => {
       const formattedAnswer = formatAIAnswer(aiAnswer);
 
       results.innerHTML = `
-        <div class="ai-card-header">
+        <div class="card ai-answer-card">
+          <div class="ai-card-header">
             <h3>✦︎ VoidAI</h3>
             <div class="copy-container">
-                <span class="copy-btn" title="Copy Answer">🗒</span>
+                 <span class="copy-btn" title="Copy Answer">🗒</span>
             </div>
-        </div>
+          </div>
           <div id="ai-answer-text">${formattedAnswer}</div>
+        </div>
       `;
 
       // This is the NEW code
-      document.querySelector(".copy-btn").onclick = (e) => {
-          const copyButton = e.target;
-          const text = document.getElementById("ai-answer-text").innerText;
-          
-          navigator.clipboard.writeText(text).then(() => {
-              // Create the "Copied!" text element
-              const feedback = document.createElement('span');
-              feedback.textContent = 'Copied!';
-              feedback.className = 'copy-feedback';
-              
-              // Add it next to the button
-              copyButton.parentElement.append(feedback);
-              
-              // Remove it after 2 seconds
-              setTimeout(() => {
-                  feedback.remove();
-              }, 2000);
-          });
-      };
+       document.querySelector(".copy-btn").onclick = (e) => {
+        const copyButton = e.target;
+        const copyContainer = copyButton.parentElement; // This is our new container
+        const text = document.getElementById("ai-answer-text").innerText;
+
+        navigator.clipboard.writeText(text).then(() => {
+            // Prevent multiple "Copied!" messages
+            if (copyContainer.querySelector('.copy-feedback')) return;
+
+            const feedback = document.createElement('div'); // Use a div for better layout
+            feedback.textContent = 'Copied!';
+            feedback.className = 'copy-feedback';
+            
+            // Add the feedback text inside the container
+            copyContainer.append(feedback);
+            
+            // Remove it after 2 seconds
+            setTimeout(() => {
+                feedback.remove();
+            }, 2000);
+        });
+    };
       loading.classList.remove("show");
       return; // ✅ Skip wiki, cricket, book, etc.
     }
