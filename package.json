@@ -2,7 +2,8 @@
   "name": "voidsearch-netlify-dependencies",
   "version": "1.0.0",
   "description": "Dependencies for Netlify Functions",
+  "type": "module",
   "dependencies": {
-    "node-fetch": "2.6.7"
+    "node-fetch": "^3.3.2"
   }
 }
