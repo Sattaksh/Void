@@ -97,7 +97,6 @@ searchBox.addEventListener("keypress", e => {
       document.querySelector(".copy-btn").onclick = () => {
         const text = document.getElementById("ai-answer-text").innerText;
         navigator.clipboard.writeText(text).then(() => {
-          alert("AI answer copied to clipboard!");
         });
       };
       loading.classList.remove("show");
