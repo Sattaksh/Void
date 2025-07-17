@@ -85,13 +85,13 @@ searchBox.addEventListener("keypress", e => {
       const formattedAnswer = formatAIAnswer(aiAnswer);
 
       results.innerHTML = `
-        <div class="card ai-answer-card">
-          <div class="ai-card-header">
+        <div class="ai-card-header">
             <h3>✦︎ VoidAI</h3>
-            <span class="copy-btn" title="Copy Answer">🗒</span>
-          </div>
-          <div id="ai-answer-text">${formattedAnswer}</div>
+            <div class="copy-container">
+                <span class="copy-btn" title="Copy Answer">🗒</span>
+            </div>
         </div>
+          <div id="ai-answer-text">${formattedAnswer}</div>
       `;
 
       // This is the NEW code
@@ -106,7 +106,7 @@ searchBox.addEventListener("keypress", e => {
               feedback.className = 'copy-feedback';
               
               // Add it next to the button
-              copyButton.after(feedback);
+              copyButton.parentElement.append(feedback);
               
               // Remove it after 2 seconds
               setTimeout(() => {
