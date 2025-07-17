@@ -497,7 +497,23 @@ body.dark .suggestion-link {
   line-height: 1;
 }
 
+/* In style.css */
 
+/* Style for the new "Copied!" text */
+.copy-feedback {
+  margin-left: 10px; /* Space between the button and the text */
+  font-size: 0.9rem;
+  color: var(--muted);
+  animation: fadeInOut 2s ease-in-out forwards;
+}
+
+/* Animation to fade the text in and out */
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
 
 @keyframes fadeInSlide {
   from {

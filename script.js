@@ -94,10 +94,25 @@ searchBox.addEventListener("keypress", e => {
         </div>
       `;
 
-      document.querySelector(".copy-btn").onclick = () => {
-        const text = document.getElementById("ai-answer-text").innerText;
-        navigator.clipboard.writeText(text).then(() => {
-        });
+      // This is the NEW code
+      document.querySelector(".copy-btn").onclick = (e) => {
+          const copyButton = e.target;
+          const text = document.getElementById("ai-answer-text").innerText;
+          
+          navigator.clipboard.writeText(text).then(() => {
+              // Create the "Copied!" text element
+              const feedback = document.createElement('span');
+              feedback.textContent = 'Copied!';
+              feedback.className = 'copy-feedback';
+              
+              // Add it next to the button
+              copyButton.after(feedback);
+              
+              // Remove it after 2 seconds
+              setTimeout(() => {
+                  feedback.remove();
+              }, 2000);
+          });
       };
       loading.classList.remove("show");
       return; // ✅ Skip wiki, cricket, book, etc.
