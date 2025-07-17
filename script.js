@@ -70,7 +70,12 @@ searchBox.addEventListener("keypress", e => {
   loading.classList.add("show");
 
   const questionWords = ["is", "what", "how", "why", "would", "define", "if", "are", "can", "could", "should", 
-    "when", "who", "?", "write", "review", "summary", "give", "will", "where", "was"];
+    "when", "who", "?", "write", "review", "summary", "give", "will", "where", "was",
+    "which", "explain", "summarize", "compare", "list", "create", 
+    "generate", "suggest", "recommend", "calculate", "translate", 
+    "solve", "draft", "outline", "analyze", "how to", "what is the", 
+    "what are the", "best", "top", "vs", "difference between", 
+    "meaning of", "facts about", "tell me about"];
   const firstWord = term.split(" ")[0].toLowerCase();
 
   // 🤖 Smart AI Q&A
