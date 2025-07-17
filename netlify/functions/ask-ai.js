@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 exports.handler = async function (event) {
     const { question } = JSON.parse(event.body);
     const { GEMINI_API_KEY } = process.env;
-    const modelName = 'gemini-2.0-flash-lite';
+    const modelName = 'gemini-2.5-flash-lite-preview-06-17';
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`;
     
     try {
