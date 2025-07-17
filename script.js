@@ -362,21 +362,24 @@ if (enhance) {
 
 async function fetchAIAnswer(question) {
     try {
-        const response = await fetch("http://localhost:3000/api/ask-ai", {
+        // This URL now points to your new Netlify Function
+        const response = await fetch("/.netlify/functions/ask-ai", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ question }) // Only send the question
+            body: JSON.stringify({ question })
         });
         const data = await response.json();
-        if (data?.choices?.[0]?.message?.content) {
-            return data.choices[0].message.content.trim();
+
+        // The structure from Netlify is slightly different, so we parse it here
+        const aiResponse = JSON.parse(data.body);
+        if (aiResponse?.candidates?.[0]?.content?.parts?.[0]?.text) {
+            return aiResponse.candidates[0].content.parts[0].text.trim();
         }
     } catch (err) {
-        console.error("Error fetching AI answer from server:", err.message);
+        console.error("Error fetching AI answer:", err);
     }
     return "❌ Sorry, the AI could not answer your question right now.";
 }
-
 
 
 
@@ -391,29 +394,20 @@ async function fetchAIAnswer(question) {
 
 async function fetchYouTube(term) {
     try {
-        // 👇 This now calls YOUR server, not YouTube directly
-        const url = `http://localhost:3000/api/youtube?q=${encodeURIComponent(term)}`;
+        // This URL now points to your new Netlify Function
+        const url = `/.netlify/functions/youtube?q=${encodeURIComponent(term)}`;
         const res = await fetch(url);
         const data = await res.json();
-        if (!data.items) throw "No YouTube results";
 
-        return `
-        <div class="card">
-            <h3>🎥 Related Videos</h3>
-            <ul>
-                ${data.items.map(v => `
-                    <li>
-                        <a href="http://googleusercontent.com/youtube.com/6{v.id.videoId}" target="_blank">
-                            ${v.snippet.title}
-                        </a>
-                    </li>`).join("")}
-            </ul>
-        </div>`;
+        // The structure from Netlify is slightly different
+        const ytData = JSON.parse(data.body);
+
+        if (!ytData.items || ytData.items.length === 0) return "";
+        return `<div class="card"><h3>🎥 Related Videos</h3><ul>${ytData.items.map(v => `<li><a href="https://www.youtube.com/watch?v=${v.id.videoId}" target="_blank">${v.snippet.title}</a></li>`).join("")}</ul></div>`;
     } catch {
         return "";
     }
-} 
-
+}
 async function suggestCorrection(term) {
   console.log("✅ suggestCorrection() triggered for:", term);
 
