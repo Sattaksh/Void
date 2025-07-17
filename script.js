@@ -75,7 +75,7 @@ searchBox.addEventListener("keypress", e => {
     "generate", "suggest", "recommend", "calculate", "translate", 
     "solve", "draft", "outline", "analyze", "how to", "what is the", 
     "what are the", "best", "top", "vs", "difference between", 
-    "meaning of", "facts about", "tell me about"];
+    "meaning of", "facts about", "tell me", "meaning", "state", "is there"];
   const firstWord = term.split(" ")[0].toLowerCase();
 
   // 🤖 Smart AI Q&A
