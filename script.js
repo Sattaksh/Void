@@ -362,18 +362,14 @@ if (enhance) {
 
 async function fetchAIAnswer(question) {
     try {
-        // This URL now points to your new Netlify Function
         const response = await fetch("/.netlify/functions/ask-ai", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ question })
         });
         const data = await response.json();
-
-        // The structure from Netlify is slightly different, so we parse it here
-        const aiResponse = JSON.parse(data.body);
-        if (aiResponse?.candidates?.[0]?.content?.parts?.[0]?.text) {
-            return aiResponse.candidates[0].content.parts[0].text.trim();
+        // The response is now much simpler to read
+        if (data.answer) {
+            return data.answer.trim();
         }
     } catch (err) {
         console.error("Error fetching AI answer:", err);
@@ -381,33 +377,20 @@ async function fetchAIAnswer(question) {
     return "❌ Sorry, the AI could not answer your question right now.";
 }
 
-
-
-
-
-
-
-
-
-  // 🎥 Fetch YouTube Results
- // script.js
-
 async function fetchYouTube(term) {
     try {
-        // This URL now points to your new Netlify Function
         const url = `/.netlify/functions/youtube?q=${encodeURIComponent(term)}`;
         const res = await fetch(url);
         const data = await res.json();
-
-        // The structure from Netlify is slightly different
-        const ytData = JSON.parse(data.body);
-
-        if (!ytData.items || ytData.items.length === 0) return "";
-        return `<div class="card"><h3>🎥 Related Videos</h3><ul>${ytData.items.map(v => `<li><a href="https://www.youtube.com/watch?v=${v.id.videoId}" target="_blank">${v.snippet.title}</a></li>`).join("")}</ul></div>`;
+        // The YouTube data is now directly available
+        if (!data.items || data.items.length === 0) return "";
+        return `<div class="card"><h3>🎥 Related Videos</h3><ul>${data.items.map(v => `<li><a href="https://www.youtube.com/watch?v=${v.id.videoId}" target="_blank">${v.snippet.title}</a></li>`).join("")}</ul></div>`;
     } catch {
         return "";
     }
 }
+
+
 async function suggestCorrection(term) {
   console.log("✅ suggestCorrection() triggered for:", term);
 
