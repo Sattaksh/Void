@@ -1,0 +1,8 @@
+{
+  "name": "voidsearch-netlify",
+  "version": "1.0.0",
+  "description": "Dependencies for Netlify Functions",
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  }
+}
