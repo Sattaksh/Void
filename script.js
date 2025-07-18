@@ -2,13 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const q = id => document.getElementById(id);
   const searchBox = q("searchBox"), searchBtn = q("searchBtn"), voiceBtn = q("voiceBtn");
   const clearBtn = document.getElementById("clearBtn");
-  const imagePreviewContainer = q("imagePreviewContainer");
-  const imagePreview = q("imagePreview");
-  const removeImageBtn = q("removeImageBtn");
-
-    // And now we attach the click event to the button
-    removeImageBtn.addEventListener('click', resetImageUpload);
-    // --- END OF THE FIX --
 
 // Show/hide ✖ when typing
 searchBox.addEventListener("input", () => {
@@ -116,7 +109,10 @@ searchBox.addEventListener("keypress", e => {
         const aiAnswer = await fetchAIAnswer(term, uploadedImageData);
         
         // --- IMPORTANT: Reset image data after the search is done ---
-        
+        uploadedImageData = null; 
+        searchBox.placeholder = "Ask me anything...";
+        q("imageUpload").value = ""; // This clears the file input so you can upload the same file again
+
         if (aiAnswer && !aiAnswer.includes("Sorry")) {
             const formattedAnswer = formatAIAnswer(aiAnswer);
             // Your complete AI card and copy button logic remains here
@@ -182,18 +178,6 @@ function formatAIAnswer(text) {
   const withItalics = withBold.replace(/\*(.*?)\*/g, "<em>$1</em>");
   return withItalics;
 }
-
-// This function resets everything related to the image
-function resetImageUpload() {
-    uploadedImageData = null;
-    imagePreviewContainer.classList.remove("show");
-    imagePreview.src = "";
-    searchBox.placeholder = "Ask me anything..."; // This is where the placeholder gets reset
-    q("imageUpload").value = ""; 
-}
-
-// This tells the remove button (✖) to run the reset function when clicked
-removeImageBtn.addEventListener('click', resetImageUpload);
 
 
 
