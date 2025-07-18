@@ -109,10 +109,7 @@ searchBox.addEventListener("keypress", e => {
         const aiAnswer = await fetchAIAnswer(term, uploadedImageData);
         
         // --- IMPORTANT: Reset image data after the search is done ---
-        uploadedImageData = null; 
-        searchBox.placeholder = "Ask me anything...";
-        q("imageUpload").value = ""; // This clears the file input so you can upload the same file again
-
+        
         if (aiAnswer && !aiAnswer.includes("Sorry")) {
             const formattedAnswer = formatAIAnswer(aiAnswer);
             // Your complete AI card and copy button logic remains here
