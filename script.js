@@ -2,6 +2,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const q = id => document.getElementById(id);
   const searchBox = q("searchBox"), searchBtn = q("searchBtn"), voiceBtn = q("voiceBtn");
   const clearBtn = document.getElementById("clearBtn");
+  const imagePreviewContainer = q("imagePreviewContainer");
+  const imagePreview = q("imagePreview");
+  const removeImageBtn = q("removeImageBtn");
+
+    // And now we attach the click event to the button
+    removeImageBtn.addEventListener('click', resetImageUpload);
+    // --- END OF THE FIX --
 
 // Show/hide ✖ when typing
 searchBox.addEventListener("input", () => {
