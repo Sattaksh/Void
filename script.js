@@ -176,6 +176,18 @@ function formatAIAnswer(text) {
   return withItalics;
 }
 
+// This function resets everything related to the image
+function resetImageUpload() {
+    uploadedImageData = null;
+    imagePreviewContainer.classList.remove("show");
+    imagePreview.src = "";
+    searchBox.placeholder = "Ask me anything..."; // This is where the placeholder gets reset
+    q("imageUpload").value = ""; 
+}
+
+// This tells the remove button (✖) to run the reset function when clicked
+removeImageBtn.addEventListener('click', resetImageUpload);
+
 
 
 
