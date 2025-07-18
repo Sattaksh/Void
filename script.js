@@ -74,12 +74,115 @@ q("imageUpload").addEventListener('change', (event) => {
         
         uploadedImageData = {
             base64: base64Data,
-            mimeType: mimeType
+            mimeType: mimeType,
+            fileName: file.name
         };
 
-        searchBox.placeholder = "Image loaded. Ask a question about it...";
+        // Update placeholder
+        searchBox.placeholder = `Image "${file.name}" loaded. Ask a question about it...`;
+        
+        // Show image preview with clear button
+        showImagePreview(reader.result, file.name);
     };
 });
+
+// Updated function to show image preview with better positioning
+function showImagePreview(imageSrc, fileName) {
+    // Remove existing preview if any
+    const existingPreview = document.querySelector('.image-preview-container');
+    if (existingPreview) {
+        existingPreview.remove();
+    }
+
+    // Create preview container
+    const previewContainer = document.createElement('div');
+    previewContainer.className = 'image-preview-container';
+    previewContainer.innerHTML = `
+        <div class="image-preview">
+            <img src="${imageSrc}" alt="${fileName}" title="${fileName}">
+            <button class="clear-image-btn" title="Remove image">×</button>
+        </div>
+        <div class="image-info">
+            📷 ${fileName} - Click × to remove
+        </div>
+    `;
+
+    // Add click event to clear button
+    const clearBtn = previewContainer.querySelector('.clear-image-btn');
+    clearBtn.addEventListener('click', clearUploadedImage);
+
+    // Insert preview right after the image upload button
+    const imageUploadButton = q("imageUpload");
+    imageUploadButton.parentElement.insertAdjacentElement('afterend', previewContainer);
+}
+// Updated function to clear the uploaded image
+function clearUploadedImage() {
+    // Clear the uploaded image data
+    uploadedImageData = null;
+    
+    // Reset placeholder
+    searchBox.placeholder = "Ask me anything...";
+    
+    // Clear file input
+    q("imageUpload").value = "";
+    
+    // Remove preview container
+    const preview = document.querySelector('.image-preview-container');
+    if (preview) {
+        preview.remove();
+    }
+}
+
+// Alternative positioning method if the above doesn't work perfectly
+function showImagePreviewAlternative(imageSrc, fileName) {
+    // Remove existing preview if any
+    const existingPreview = document.querySelector('.image-preview-container');
+    if (existingPreview) {
+        existingPreview.remove();
+    }
+
+    // Create preview container
+    const previewContainer = document.createElement('div');
+    previewContainer.className = 'image-preview-container';
+    previewContainer.innerHTML = `
+        <div class="image-preview">
+            <img src="${imageSrc}" alt="${fileName}" title="${fileName}">
+            <button class="clear-image-btn" title="Remove image">×</button>
+        </div>
+        <div class="image-info">
+            📷 ${fileName} - Click × to remove
+        </div>
+    `;
+
+    // Add click event to clear button
+    const clearBtn = previewContainer.querySelector('.clear-image-btn');
+    clearBtn.addEventListener('click', clearUploadedImage);
+
+    // Find a better insertion point - look for suggestions or results area
+    const suggestions = document.getElementById('suggestions');
+    const results = document.getElementById('results');
+    
+    // Insert before suggestions if they exist, otherwise before results
+    if (suggestions) {
+        suggestions.parentElement.insertBefore(previewContainer, suggestions);
+    } else if (results) {
+        results.parentElement.insertBefore(previewContainer, results);
+    } else {
+        // Fallback: insert after search container
+        const searchContainer = searchBox.parentElement;
+        searchContainer.insertAdjacentElement('afterend', previewContainer);
+    }
+}
+// Optional: Add a function to clear image when starting a new non-image search
+function clearImageOnNewSearch() {
+    if (uploadedImageData) {
+        const userWantsToClear = confirm("You have an image loaded. Do you want to clear it for this new search?");
+        if (userWantsToClear) {
+            clearUploadedImage();
+        }
+    }
+}
+
 
 
   // 🔍 Trigger search
@@ -111,10 +214,7 @@ searchBox.addEventListener("keypress", e => {
         const aiAnswer = await fetchAIAnswer(term, uploadedImageData);
         
         // --- IMPORTANT: Reset image data after the search is done ---
-        uploadedImageData = null; 
-        searchBox.placeholder = "Ask me anything...";
-        q("imageUpload").value = ""; // This clears the file input so you can upload the same file again
-
+        
         if (aiAnswer && !aiAnswer.includes("Sorry")) {
             const formattedAnswer = formatAIAnswer(aiAnswer);
             // Your complete AI card and copy button logic remains here
