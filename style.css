@@ -1,41 +1,87 @@
 :root {
-  --bg: #f9fafb;
-  --text: #111827;
-  --accent: #3b82f6;
+  --bg: #ffffff;
+  --text: #1a1a1a;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-light: #dbeafe;
   --card: #ffffff;
   --muted: #6b7280;
-  --shadow: rgba(0, 0, 0, 0.05);
+  --muted-light: #9ca3af;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --shadow-hover: rgba(0, 0, 0, 0.15);
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
 }
 
 body.dark {
-  --bg: #1e1e1e;
-  --text: #f3f4f6;
-  --accent: #60a5fa;
-  --card: #2a2a2a;
-  --muted: #9ca3af;
+  --bg: #1d1e1f;
+  --text: #f1f5f9;
+  --accent: #3b7ce6;
+  --accent-hover: #2563eb;
+  --accent-light: rgba(59, 130, 246, 0.1);
+  --card: #09090a;
+  --muted: #94a3b8;
+  --muted-light: #64748b;
   --shadow: rgba(0, 0, 0, 0.3);
+  --shadow-hover: rgba(0, 0, 0, 0.4);
+  --border: #334155;
+  --border-light: #475569;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   background: var(--bg);
   color: var(--text);
-  transition: background 0.4s ease, color 0.4s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: 1.6;
+  overflow-x: hidden;
 }
 
+/* Clean scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* Clean Navbar */
 .navbar {
   background: var(--card);
-  box-shadow: 0 2px 10px var(--shadow);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 3px var(--shadow);
   position: sticky;
   top: 0;
   z-index: 1000;
+  transition: all 0.3s ease;
 }
 
 .nav-content {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -45,116 +91,149 @@ body {
   font-size: 1.5rem;
   margin: 0;
   cursor: pointer;
-  position: relative;
-  z-index: 2;
+  font-weight: 700;
+  color: var(--accent);
+  transition: color 0.3s ease;
 }
 
 .logo:hover {
-  transform: scale(1.05);
+  opacity: 0.8;
 }
 
 .theme-toggle {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1.1rem;
   cursor: pointer;
   color: var(--text);
-  transition: transform 0.3s ease;
+  padding: 0.75rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px var(--shadow);
 }
+
 .theme-toggle:hover {
-  transform: rotate(15deg);
+  border-color: var(--accent);
+  box-shadow: 0 2px 6px var(--shadow-hover);
 }
 
 .logo-group {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 10px; /* Space between VoidSearch and the text */
+  gap: 12px;
 }
 
 .credit-text {
   white-space: nowrap;
   opacity: 0;
-  transform: scaleX(0);
+  transform: scaleX(0) translateX(-10px);
   transform-origin: left;
-  transition: all 0.4s ease-in-out;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   font-size: 0.9rem;
   color: var(--muted);
+  font-weight: 500;
 }
 
 .logo-group:hover .credit-text {
   opacity: 1;
-  transform: scaleX(1);
+  transform: scaleX(1) translateX(0);
 }
 
+/* Main content with entrance animation */
 .main-content {
   max-width: 900px;
   margin: 2rem auto;
-  padding: 0 1rem;
-  animation: fadeInUp 0.5s ease both;
+  padding: 0 1.5rem;
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
+
+/* In your style.css file */
 
 .search-section {
   margin-bottom: 2rem;
-  position: relative;
+  position: relative; /* This is crucial */
+  z-index: 1000;      /* This ensures it's layered on top */
 }
 
 .search-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
-
+  animation: slideInScale 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
+
 .search-wrapper {
   position: relative;
-  display: inline-block;
   width: 100%;
   max-width: 600px;
+  z-index: 100; /* We give it a high z-index */
 }
 
+/* Clean search box with smooth animations */
 #searchBox {
   width: 100%;
-  max-width: 600px;
-  padding: 1rem;
-  font-size: 1.1rem;
-  border: 1px solid #ccc;
-  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  border: 2px solid var(--border);
+  border-radius: 12px;
   outline: none;
-  transition: box-shadow 0.3s ease;
+  background: var(--card);
+  color: var(--text);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px var(--shadow);
+  font-family: inherit;
 }
 
-#clearBtn {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  font-size: 1.2rem;
+#searchBox::placeholder {
   color: var(--muted);
-  cursor: pointer;
-  display: none; /* initially hidden */
-}
-
-#clearBtn:hover {
-  color: var(--accent);
+  transition: all 0.3s ease;
 }
 
 #searchBox:focus {
-  box-shadow: 0 0 8px var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-light), 0 4px 12px var(--shadow-hover);
+  transform: translateY(-2px);
 }
 
-/* This is the NEW style */
-/* In style.css */
+#searchBox:focus::placeholder {
+  opacity: 0.7;
+  transform: translateY(-1px);
+}
 
+/* Clear button */
+#clearBtn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--muted-light);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+#clearBtn:hover {
+  background: var(--danger);
+}
+
+/* Clean button styling with enhanced animations */
 .buttons {
   display: flex;
   width: 100%;
   max-width: 600px;
-  margin-top: 0.8rem;
-  justify-content: space-between; /* This is the key change */
-  align-items: center;            /* This keeps them vertically aligned */
+  margin-top: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both 0.2s;
 }
 
 #searchBtn,
@@ -162,64 +241,145 @@ body {
   background: var(--accent);
   color: white;
   border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 1rem;
-  transition: background 0.3s, transform 0.2s;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+  min-width: 100px;
+  position: relative;
+  overflow: hidden;
 }
+
+#searchBtn::before,
+#voiceBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+#searchBtn:hover::before,
+#voiceBtn:hover::before {
+  left: 100%;
+}
+
 #searchBtn:hover,
 #voiceBtn:hover {
-  background: #2563eb;
+  background: var(--accent-hover);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
   transform: translateY(-2px);
 }
 
+#searchBtn:active,
+#voiceBtn:active {
+  transform: translateY(0);
+}
+
+.right-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Image upload button - removed glow effect */
+.image-upload-btn {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px var(--shadow);
+}
+
+.image-upload-btn:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* Clean suggestions list with proper z-index */
+/* In your style.css file */
+
 .suggestions-list {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 8px);
   left: 0;
+  right: 0;
   width: 100%;
-  max-width: 600px;
   background: var(--card);
-  box-shadow: 0 4px 16px var(--shadow);
-  margin-top: 0.5rem;
+  box-shadow: 0 8px 24px var(--shadow-hover);
   border-radius: 8px;
+  border: 1px solid var(--border);
   overflow: hidden;
-  z-index: 5;
-  animation: fadeInDown 0.3s ease both;
+  z-index: 10000; /* Keep the high z-index */
+  max-height: 300px;
+  overflow-y: auto;
+  will-change: transform; /* This is the magic line */
 }
 
 .suggestions-list li {
-  padding: 0.8rem 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
   cursor: pointer;
-  transition: background 0.2s;
-}
-#suggestions li.active {
-  background-color: var(--accent);
-  color: white;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
+.suggestions-list li:hover {
+  background: var(--accent-light);
+  transform: translateX(4px);
+}
+
+.suggestions-list li:last-child {
+  border-bottom: none;
+}
+
+#suggestions li.active {
+  background: var(--accent);
+  color: white;
+  transform: translateX(6px);
+}
+
+/* Loading animation */
 #loading {
   display: none;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   text-align: center;
   padding: 2rem;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  color: var(--muted);
 }
 
 #loading.show {
   display: block;
-  opacity: 1;
-  transform: translateY(0);
 }
 
+#loading::after {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  border-top-color: var(--accent);
+  animation: spin 1s linear infinite;
+  margin-left: 8px;
+}
+
+/* Clean card design with enhanced animations */
 #results {
   display: grid;
   gap: 1.5rem;
-  animation: fadeIn 0.6s ease both;
+  animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 .card {
@@ -227,31 +387,179 @@ body {
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 2px 8px var(--shadow);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid var(--border);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover::before {
+  left: 0;
+}
+
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px var(--shadow);
+  box-shadow: 0 8px 24px var(--shadow-hover);
+  transform: translateY(-4px) scale(1.01);
+  border-color: var(--border-light);
 }
 
 .card h3 {
   margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.card h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 1.3rem;
 }
 
 .card img {
-  max-width: 100%;
+  max-width: 120px;
   border-radius: 8px;
   margin-top: 1rem;
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 8px var(--shadow);
 }
+
 .card img:hover {
   transform: scale(1.02);
 }
 
+/* AI card styling with enhanced animations */
+.card.ai-card {
+  background: var(--card);
+  border-left: 3px solid var(--accent);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.1);
+  animation: slideInGlow 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+  position: relative;
+}
+
+.card.ai-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(59, 130, 246, 0.01) 100%);
+  pointer-events: none;
+  border-radius: 12px;
+}
+
+.card.ai-card h3 {
+  color: var(--accent);
+}
+
+.card.ai-card h3::before {
+  content: "🤖 ";
+  margin-right: 0.25rem;
+  animation: bounce 2s infinite;
+}
+
+.ai-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.copy-container {
+  position: relative;
+}
+
+.copy-feedback {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: var(--success);
+  font-weight: 500;
+  animation: fadeInOut 2s ease-in-out;
+}
+
+.copy-btn {
+  cursor: pointer;
+  background: var(--accent);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.copy-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+/* Clean interactive elements */
+.speak-btn {
+  background: none;
+  border: 1px solid var(--border);
+  margin-left: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--muted);
+  transition: all 0.2s ease;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  background: var(--card);
+}
+
+.speak-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.read-more-btn, .collapse-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.read-more-btn:hover,
+.collapse-btn:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* History section with animations */
 .history-section {
   margin-top: 3rem;
   text-align: center;
-  animation: fadeInUp 0.6s ease;
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) both 0.4s;
 }
 
 .history-list {
@@ -265,300 +573,67 @@ body {
 }
 
 .history-list li {
-  background: #e5e7eb;
+  background: var(--card);
   padding: 0.5rem 1rem;
-  border-radius: 999px;
+  border-radius: 20px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--border);
+  font-weight: 500;
+  font-size: 0.9rem;
+  position: relative;
+  overflow: hidden;
 }
+
+.history-list li::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--accent-light), transparent);
+  transition: left 0.4s;
+}
+
+.history-list li:hover::before {
+  left: 100%;
+}
+
 .history-list li:hover {
   background: var(--accent);
   color: white;
+  border-color: var(--accent);
+  transform: translateY(-3px) scale(1.05);
 }
 
-body.dark .history-list li {
-  background: #374151;
-  color: white;
-}
-
-.clear-btn {
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-.clear-btn:hover {
-  color: #1d4ed8;
-}
-
+/* Back to top button with enhanced animations */
 .back-to-top {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  bottom: 2rem;
+  right: 2rem;
   background: var(--accent);
   color: white;
   border: none;
   border-radius: 50%;
-  font-size: 1.4rem;
-  padding: 0.6rem 0.9rem;
+  font-size: 1.2rem;
+  padding: 0.75rem;
   display: none;
   cursor: pointer;
-  box-shadow: 0 4px 12px var(--shadow);
-  transition: transform 0.3s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeInScale 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
+
 .back-to-top:hover {
-  transform: scale(1.1);
+  background: var(--accent-hover);
+  transform: scale(1.1) rotate(360deg);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
 }
 
-.suggestion-link {
-  color: var(--accent);
-  text-decoration: underline;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-body.dark .suggestion-link {
-  color: #ffcb6b !important;
-  text-shadow: 0 0 6px rgba(255, 200, 100, 0.9) !important;
-}
-
-.voice-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-}
-
-.fade-text {
-  display: none;
-  margin-top: 0.3rem;
-  font-size: 0.85rem;
-  color: var(--muted);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.fade-text.show {
-  display: block;
-  opacity: 1;
-}
-
-
-/* ✨ Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-15px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.wiki-summary span {
-  transition: opacity 0.3s ease;
-}
-.toggle-summary {
-  display: inline-block;
-  margin-top: 0.5rem;
-  color: var(--accent);
-  font-size: 0.9rem;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.extra-summary {
-  margin-top: 1rem;
-  opacity: 0;
-  animation: fadeIn 0.6s ease forwards;
-}
-
-.read-more-btn, .collapse-btn {
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-size: 0.92rem;
-  cursor: pointer;
-  margin-top: 1rem;
-  text-decoration: underline;
-  transition: color 0.3s;
-}
-
-.read-more-btn:hover,
-.collapse-btn:hover {
-  color: #2563eb;
-}
-
-
-
-/* 👇 This gives fade-in & fade-out animation */
-#expandedContent {
-  opacity: 0;
-  max-height: 0;
-  overflow: hidden;
-  transition: opacity 0.3s ease, max-height 0.3s ease;
-  margin-top: 1rem;
-}
-
-/* When shown */
-#expandedContent.show {
-  opacity: 1;
-  max-height: 1000px; /* or more, depending on how much content you expect */
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.speak-btn {
-  background: none;
-  border: none;
-  margin-left: 0.5rem;
-  cursor: pointer;
-  font-size: 1rem;
-  color: var(--muted);
-  transition: transform 0.2s ease, color 0.3s ease;
-}
-
-.speak-btn:hover {
-  transform: scale(1.2);
-  color: var(--accent);
-}
-
-.card h2 {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.card img {
-  max-width: 120px;
-  border-radius: 4px;
-  margin-top: 1rem;
-}
-
-.card h3 {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-}
-
-.card.ai-card {
-  background: #f4faff;
-  border-left: 4px solid #0077cc;
-  box-shadow: 0 0 8px rgba(0,0,0,0.05);
-  animation: fadeInSlide 0.4s ease-in-out;
-}
-
-.card.ai-card h3::before {
-  content: "🤖 ";
-}
-
-/* Replace your old .ai-card-header style with this block */
-
-.ai-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start; /* Align items to the top */
-  margin-bottom: 25px;      /* Creates space for the "Copied!" text below */
-}
-
-/* This new container will hold the button and the feedback */
-.copy-container {
-  position: relative;      /* This is crucial for positioning the text below */
-  text-align: right;       /* Aligns the button to the right */
-}
-
-/* This positions the "Copied!" text directly below the button */
-.copy-feedback {
-  position: absolute;
-  top: 100%;             /* Position it right below the container */
-  right: 0;              /* Align it with the right edge */
-  margin-top: 5px;       /* Add a small gap */
-  
-  font-size: 0.9rem;
-  color: var(--muted);
-  white-space: nowrap;   /* Prevent text from wrapping */
-  animation: fadeInOut 2s ease-in-out forwards;
-}
-
-/* Make sure you have this animation keyframe rule in your CSS */
-@keyframes fadeInOut {
-  0% { opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { opacity: 0; }
-}
-.copy-btn {
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: transform 0.2s ease;
-}
-
-.copy-btn:hover {
-  transform: scale(1.2);
-}
-
-#ai-answer-text {
-  margin-top: 10px;
-  line-height: 1.6;
-}
-
-#ai-answer-text ul {
-  padding-left: 20px;
-  margin-top: 10px;
-  list-style-type: disc;
-}
-
-#ai-answer-text strong {
-  font-weight: bold;
-}
-
-#ai-answer-text em {
-  font-style: italic;
-}
-
-.card.ai-card .copy-btn {
-  background-color: #0077cc;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  line-height: 1;
-}
-
-/* This is the new style for the image button */
-.image-upload-btn {
-  background: var(--accent);
-  color: white;
-  padding: 0.6rem 1rem;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 1rem;
-  display: inline-block;
-  transition: background 0.3s, transform 0.2s;
-}
-
-.image-upload-btn:hover {
-  background: #2563eb;
-  transform: translateY(-2px);
-}
-
-/* In style.css */
-
-.right-buttons {
-  display: flex;
-  gap: 10px; /* This maintains the space between your search and voice buttons */
-}
-
+/* Image preview */
 .image-preview-container {
-  margin: 10px 0;
-  margin-left: 10px; /* Slight right shift */
+  margin: 1rem 0;
 }
 
 .image-preview {
@@ -570,14 +645,15 @@ body.dark .suggestion-link {
   max-width: 200px;
   max-height: 150px;
   border-radius: 8px;
-  border: 2px solid #ddd;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px var(--shadow);
 }
 
 .clear-image-btn {
   position: absolute;
   top: -8px;
   right: -8px;
-  background: #ff4444;
+  background: var(--danger);
   color: white;
   border: none;
   border-radius: 50%;
@@ -587,42 +663,237 @@ body.dark .suggestion-link {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  font-size: 12px;
+  transition: all 0.2s ease;
 }
 
 .clear-image-btn:hover {
-  background: #cc0000;
+  background: #b91c1c;
+  transform: scale(1.1);
 }
 
 .image-info {
-  font-size: 12px;
-  color: #666;
-  margin-top: 5px;
-  padding: 5px;
-  background: #f5f5f5;
-  border-radius: 4px;
-}
-/* Ensure search container maintains proper layout */
-.search-container {
-  position: relative;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: var(--card);
+  border-radius: 6px;
+  border: 1px solid var(--border);
 }
 
-.search-container .clearBtn {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 5;
+.fade-text {
+  display: none;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes fadeInSlide {
+.fade-text.show {
+  display: block;
+  opacity: 1;
+  animation: pulse 2s infinite;
+}
+
+/* Clean animations and keyframes */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(40px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInScale {
+  from { 
+    opacity: 0; 
+    transform: scale(0.95) translateY(20px);
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInGlow {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
+    box-shadow: 0 0 0 rgba(59, 130, 246, 0);
   }
   to {
     opacity: 1;
     transform: translateY(0);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.1);
   }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes spin {
+  to { 
+    transform: rotate(360deg); 
+  }
+}
+
+@keyframes fadeInOut {
+  0% { 
+    opacity: 0; 
+    transform: translateY(-4px);
+  }
+  20% { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+  80% { 
+    opacity: 1; 
+  }
+  100% { 
+    opacity: 0; 
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+/* Expanded content */
+#expandedContent {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+#expandedContent.show {
+  opacity: 1;
+  max-height: 1000px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 0 1rem;
+  }
+  
+  .nav-content {
+    padding: 1rem;
+  }
+  
+  .buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+  
+  .right-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  #searchBtn,
+  #voiceBtn,
+  .image-upload-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .card {
+    padding: 1.25rem;
+  }
+  
+  .back-to-top {
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.6rem;
+  }
+}
+
+/* Additional clean elements */
+.suggestion-link {
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.suggestion-link:hover {
+  opacity: 0.8;
+}
+
+.clear-btn {
+  background: var(--card);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.clear-btn:hover {
+  background: var(--danger);
+  color: white;
+  transform: translateY(-1px);
 }
