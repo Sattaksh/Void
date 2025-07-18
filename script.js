@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchBox = q("searchBox"), searchBtn = q("searchBtn"), voiceBtn = q("voiceBtn");
   const clearBtn = document.getElementById("clearBtn");
 
+  let uploadedImageData = null;
+
 // Show/hide ✖ when typing
 searchBox.addEventListener("input", () => {
   clearBtn.style.display = searchBox.value ? "block" : "none";
@@ -57,7 +59,7 @@ clearBtn.addEventListener("click", () => {
 };
 
 // Add this new global variable at the top of your script, inside the DOMContentLoaded listener
-let uploadedImageData = null;
+
 
 // Add this new event listener for the image upload button
 q("imageUpload").addEventListener('change', (event) => {
