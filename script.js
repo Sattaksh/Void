@@ -420,12 +420,11 @@ if (enhance) {
 
 // Replace your old fetchAIAnswer with this one
 
+// In your main script.js
+
 async function fetchAIAnswer(question, imageData) {
     try {
-        // Create the basic payload with the user's question
         const payload = { question };
-        
-        // If image data exists, add it to the payload
         if (imageData) {
             payload.imageBase64 = imageData.base64;
             payload.imageMimeType = imageData.mimeType;
@@ -435,12 +434,17 @@ async function fetchAIAnswer(question, imageData) {
             method: "POST",
             body: JSON.stringify(payload)
         });
+        
+        // Check if the response itself is okay
+        if (!response.ok) {
+            throw new Error(`Server function failed with status ${response.status}`);
+        }
+        
         const data = await response.json();
-
-        // The way we read the response from our server is now different
-        const aiResponse = JSON.parse(data.body);
-        if (aiResponse?.candidates?.[0]?.content?.parts?.[0]?.text) {
-            return aiResponse.candidates[0].content.parts[0].text.trim();
+        
+        // Now we look for our simple "answer" property
+        if (data.answer) {
+            return data.answer.trim();
         }
     } catch (err) {
         console.error("Error fetching AI answer:", err);
@@ -452,15 +456,21 @@ async function fetchYouTube(term) {
     try {
         const url = `/.netlify/functions/youtube?q=${encodeURIComponent(term)}`;
         const res = await fetch(url);
+
+        if (!res.ok) {
+            throw new Error(`Server function failed with status ${res.status}`);
+        }
+
         const data = await res.json();
+        
         // The YouTube data is now directly available
         if (!data.items || data.items.length === 0) return "";
         return `<div class="card"><h3>🎥 Related Videos</h3><ul>${data.items.map(v => `<li><a href="https://www.youtube.com/watch?v=${v.id.videoId}" target="_blank">${v.snippet.title}</a></li>`).join("")}</ul></div>`;
-    } catch {
-        return "";
+    } catch(err) {
+        console.error("Error fetching YouTube videos:", err);
+        return ""; // Return empty string on error
     }
 }
-
 
 async function suggestCorrection(term) {
   console.log("✅ suggestCorrection() triggered for:", term);

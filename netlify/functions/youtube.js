@@ -10,12 +10,12 @@ exports.handler = async function (event) {
         const youtubeResponse = await fetch(url);
         const youtubeData = await youtubeResponse.json();
         
-        // Just forward the data from YouTube
         return {
             statusCode: 200,
-            body: JSON.stringify(youtubeData)
+            body: JSON.stringify(youtubeData) // Just forward the data
         };
     } catch (error) {
+        console.error("YouTube Function Error:", error);
         return { statusCode: 500, body: JSON.stringify({ error: 'Failed to fetch from YouTube API' }) };
     }
 };
