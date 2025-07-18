@@ -26,11 +26,18 @@
             <button id="clearBtn" title="Clear">✖</button>
         </div>
         <div class="buttons">
-          <button id="searchBtn">🔍</button>
-          <div class="voice-wrapper">
-            <button id="voiceBtn">🎙️</button>
-            <span id="speakPrompt" class="fade-text">Speak!</span>
-          </div>
+            <div>
+                <label for="imageUpload" class="image-upload-btn">🖼️ Add Image</label>
+                <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+            </div>
+
+            <div class="right-buttons">
+                <button id="searchBtn">🔍</button>
+                <div class="voice-wrapper">
+                    <button id="voiceBtn">🎙️</button>
+                    <span id="speakPrompt" class="fade-text">Speak!</span>
+                </div>
+            </div>
         </div>
         <ul id="suggestions" class="suggestions-list"></ul>
       </div>

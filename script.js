@@ -56,6 +56,30 @@ clearBtn.addEventListener("click", () => {
   }, 1500);
 };
 
+// Add this new global variable at the top of your script, inside the DOMContentLoaded listener
+let uploadedImageData = null;
+
+// Add this new event listener for the image upload button
+q("imageUpload").addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+        const [header, base64Data] = reader.result.split(',');
+        const mimeType = header.match(/:(.*?);/)[1];
+        
+        uploadedImageData = {
+            base64: base64Data,
+            mimeType: mimeType
+        };
+
+        searchBox.placeholder = "Image loaded. Ask a question about it...";
+    };
+});
+
+
   // 🔍 Trigger search
   searchBtn.onclick = () => triggerSearch(searchBox.value.trim());
 searchBox.addEventListener("keypress", e => {
@@ -63,38 +87,46 @@ searchBox.addEventListener("keypress", e => {
 });
 
   async function triggerSearch(term) {
-  if (!term) return;
-  suggUL.innerHTML = "";
-  saveHistory(term);
-  results.innerHTML = "";
-  loading.classList.add("show");
+    // This check now prevents a search if both the text and image are empty
+    if (!term && !uploadedImageData) return;
+    
+    suggUL.innerHTML = "";
+    saveHistory(term);
+    results.innerHTML = "";
+    loading.classList.add("show");
 
-  const questionWords = ["is", "what", "how", "why", "would", "define", "if", "are", "can", "could", "should", 
-    "when", "who", "?", "write", "review", "summary", "give", "will", "where", "was",
-    "which", "explain", "summarize", "compare", "list", "create", 
-    "generate", "suggest", "recommend", "calculate", "translate", 
-    "solve", "draft", "outline", "analyze", "how to", "what is the", 
-    "what are the", "best", "top", "vs", "difference between", 
-    "meaning of", "facts about", "tell me", "meaning", "state", "is there"];
-  const firstWord = term.split(" ")[0].toLowerCase();
+    // --- THIS IS THE UPDATED LOGIC ---
+    const isImageQuery = !!uploadedImageData; // Will be true if an image is uploaded
+    const questionWords = ["is", "what", "how", "why", "would", "define", "if", "are", "can", "could", "should", "when", 
+      "who", "?", "write", "review", "summary", "give", "will", "where", "was", "which", "explain", 
+      "summarize", "compare", "list", "create", "generate", "suggest", "recommend", "calculate", 
+      "translate", "solve", "draft", "outline", "analyze", "how to", "what is the", "what are the","best", "top", "vs", "difference between", 
+      "meaning of", "facts about", "tell me", "meaning", "state", "is there"];
+    const isTextQuestion = questionWords.includes(term.split(" ")[0].toLowerCase());
+    
+    // The AI will now be called if it's a text question OR if an image has been uploaded
+    if (isTextQuestion || isImageQuery) {
+        const aiAnswer = await fetchAIAnswer(term, uploadedImageData);
+        
+        // --- IMPORTANT: Reset image data after the search is done ---
+        uploadedImageData = null; 
+        searchBox.placeholder = "Ask me anything...";
+        q("imageUpload").value = ""; // This clears the file input so you can upload the same file again
 
-  // 🤖 Smart AI Q&A
-  if (questionWords.includes(firstWord)) {
-    const aiAnswer = await fetchAIAnswer(term);
-    if (aiAnswer) {
-      const formattedAnswer = formatAIAnswer(aiAnswer);
-
-      results.innerHTML = `
-        <div class="card ai-answer-card">
-          <div class="ai-card-header">
-            <h3>✦︎ VoidAI</h3>
-            <div class="copy-container">
-                 <span class="copy-btn" title="Copy Answer">🗒</span>
-            </div>
-          </div>
-          <div id="ai-answer-text">${formattedAnswer}</div>
-        </div>
-      `;
+        if (aiAnswer && !aiAnswer.includes("Sorry")) {
+            const formattedAnswer = formatAIAnswer(aiAnswer);
+            // Your complete AI card and copy button logic remains here
+            results.innerHTML = `
+                <div class="card ai-answer-card">
+                  <div class="ai-card-header">
+                    <h3>✦︎ VoidAI</h3>
+                    <div class="copy-container">
+                        <span class="copy-btn" title="Copy Answer">🗒</span>
+                    </div>
+                  </div>
+                  <div id="ai-answer-text">${formattedAnswer}</div>
+                </div>
+            `;
 
       // This is the NEW code
        document.querySelector(".copy-btn").onclick = (e) => {
@@ -386,16 +418,29 @@ if (enhance) {
 
   // script.js
 
-async function fetchAIAnswer(question) {
+// Replace your old fetchAIAnswer with this one
+
+async function fetchAIAnswer(question, imageData) {
     try {
+        // Create the basic payload with the user's question
+        const payload = { question };
+        
+        // If image data exists, add it to the payload
+        if (imageData) {
+            payload.imageBase64 = imageData.base64;
+            payload.imageMimeType = imageData.mimeType;
+        }
+
         const response = await fetch("/.netlify/functions/ask-ai", {
             method: "POST",
-            body: JSON.stringify({ question })
+            body: JSON.stringify(payload)
         });
         const data = await response.json();
-        // The response is now much simpler to read
-        if (data.answer) {
-            return data.answer.trim();
+
+        // The way we read the response from our server is now different
+        const aiResponse = JSON.parse(data.body);
+        if (aiResponse?.candidates?.[0]?.content?.parts?.[0]?.text) {
+            return aiResponse.candidates[0].content.parts[0].text.trim();
         }
     } catch (err) {
         console.error("Error fetching AI answer:", err);

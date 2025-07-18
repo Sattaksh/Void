@@ -145,10 +145,16 @@ body {
   box-shadow: 0 0 8px var(--accent);
 }
 
+/* This is the NEW style */
+/* In style.css */
+
 .buttons {
   display: flex;
-  gap: 10px;
+  width: 100%;
+  max-width: 600px;
   margin-top: 0.8rem;
+  justify-content: space-between; /* This is the key change */
+  align-items: center;            /* This keeps them vertically aligned */
 }
 
 #searchBtn,
@@ -526,6 +532,29 @@ body.dark .suggestion-link {
   line-height: 1;
 }
 
+/* This is the new style for the image button */
+.image-upload-btn {
+  background: var(--accent);
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: inline-block;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.image-upload-btn:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+}
+
+/* In style.css */
+
+.right-buttons {
+  display: flex;
+  gap: 10px; /* This maintains the space between your search and voice buttons */
+}
 
 
 @keyframes fadeInSlide {
