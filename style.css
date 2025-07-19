@@ -18,7 +18,7 @@
 
 body.dark {
   --bg: #1d1e1f;
-  --text: #f1f5f9;
+  --text: #dfdada;
   --accent: #3b7ce6;
   --accent-hover: #2563eb;
   --accent-light: rgba(59, 130, 246, 0.1);
@@ -148,12 +148,10 @@ body {
   animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-/* In your style.css file */
-
 .search-section {
   margin-bottom: 2rem;
-  position: relative; /* This is crucial */
-  z-index: 1000;      /* This ensures it's layered on top */
+  position: relative;
+  z-index: 1000;
 }
 
 .search-container {
@@ -167,7 +165,7 @@ body {
   position: relative;
   width: 100%;
   max-width: 600px;
-  z-index: 100; /* We give it a high z-index */
+  z-index: 100;
 }
 
 /* Clean search box with smooth animations */
@@ -225,7 +223,7 @@ body {
   background: var(--danger);
 }
 
-/* Clean button styling with enhanced animations */
+/* Enhanced mobile-friendly button styling */
 .buttons {
   display: flex;
   width: 100%;
@@ -287,7 +285,7 @@ body {
   gap: 8px;
 }
 
-/* Image upload button - removed glow effect */
+/* Image upload button */
 .image-upload-btn {
   background: var(--card);
   color: var(--text);
@@ -308,8 +306,6 @@ body {
 }
 
 /* Clean suggestions list with proper z-index */
-/* In your style.css file */
-
 .suggestions-list {
   position: absolute;
   top: calc(100% + 8px);
@@ -321,10 +317,10 @@ body {
   border-radius: 8px;
   border: 1px solid var(--border);
   overflow: hidden;
-  z-index: 10000; /* Keep the high z-index */
+  z-index: 10000;
   max-height: 300px;
   overflow-y: auto;
-  will-change: transform; /* This is the magic line */
+  will-change: transform;
 }
 
 .suggestions-list li {
@@ -699,45 +695,45 @@ body {
 
 /* Clean animations and keyframes */
 @keyframes fadeIn {
-  from { 
-    opacity: 0; 
+  from {
+    opacity: 0;
     transform: translateY(20px);
   }
-  to { 
-    opacity: 1; 
+  to {
+    opacity: 1;
     transform: translateY(0);
   }
 }
 
 @keyframes fadeInUp {
-  from { 
-    opacity: 0; 
+  from {
+    opacity: 0;
     transform: translateY(40px);
   }
-  to { 
-    opacity: 1; 
+  to {
+    opacity: 1;
     transform: translateY(0);
   }
 }
 
 @keyframes slideInScale {
-  from { 
-    opacity: 0; 
+  from {
+    opacity: 0;
     transform: scale(0.95) translateY(20px);
   }
-  to { 
-    opacity: 1; 
+  to {
+    opacity: 1;
     transform: scale(1) translateY(0);
   }
 }
 
 @keyframes slideUp {
-  from { 
-    opacity: 0; 
+  from {
+    opacity: 0;
     transform: translateY(30px);
   }
-  to { 
-    opacity: 1; 
+  to {
+    opacity: 1;
     transform: translateY(0);
   }
 }
@@ -779,25 +775,25 @@ body {
 }
 
 @keyframes spin {
-  to { 
-    transform: rotate(360deg); 
+  to {
+    transform: rotate(360deg);
   }
 }
 
 @keyframes fadeInOut {
-  0% { 
-    opacity: 0; 
+  0% {
+    opacity: 0;
     transform: translateY(-4px);
   }
-  20% { 
-    opacity: 1; 
+  20% {
+    opacity: 1;
     transform: translateY(0);
   }
-  80% { 
-    opacity: 1; 
+  80% {
+    opacity: 1;
   }
-  100% { 
-    opacity: 0; 
+  100% {
+    opacity: 0;
     transform: translateY(-4px);
   }
 }
@@ -828,8 +824,87 @@ body {
   max-height: 1000px;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+/* Enhanced Mobile Responsive Design */
+/* Small phones (320px to 480px) */
+@media (max-width: 480px) {
+  .main-content {
+    padding: 0 0.75rem;
+  }
+  
+  .nav-content {
+    padding: 0.75rem;
+  }
+  
+  #searchBox {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 1rem;
+  }
+  
+  .buttons {
+    flex-direction: column;
+    gap: 0.875rem;
+    align-items: stretch;
+  }
+  
+  .search-button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    order: 1;
+  }
+  
+  .right-buttons {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0.75rem;
+    order: 2;
+    margin-top: 0.5rem;
+  }
+  
+  #searchBtn {
+    min-height: 48px;
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    background: var(--accent);
+    order: 1;
+    margin-bottom: 0.5rem;
+  }
+  
+  #voiceBtn,
+  .image-upload-btn {
+    flex: 1;
+    min-height: 48px;
+    padding: 0.875rem 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 12px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    background: var(--card);
+    border: 2px solid var(--border);
+    color: var(--text);
+  }
+  
+  .card {
+    padding: 1rem;
+  }
+  
+  .back-to-top {
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.6rem;
+  }
+}
+
+/* Medium phones (481px to 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
   .main-content {
     padding: 0 1rem;
   }
@@ -840,30 +915,68 @@ body {
   
   .buttons {
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 1rem;
     align-items: stretch;
   }
   
   .right-buttons {
-    flex-direction: column;
-    gap: 0.5rem;
+    flex-direction: row;
+    gap: 0.75rem;
+    max-width: 280px;
+    margin: 0 auto;
   }
   
   #searchBtn,
   #voiceBtn,
   .image-upload-btn {
-    width: 100%;
+    min-height: 48px;
     justify-content: center;
+  }
+  
+  #searchBtn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  #voiceBtn,
+  .image-upload-btn {
+    flex: 1;
   }
   
   .card {
     padding: 1.25rem;
   }
+}
+
+/* Enhanced touch feedback for mobile */
+@media (max-width: 768px) {
+  .buttons button {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
   
-  .back-to-top {
-    bottom: 1rem;
-    right: 1rem;
-    padding: 0.6rem;
+  .buttons button:active {
+    transform: scale(0.98);
+    transition-duration: 0.1s;
+  }
+  
+  .buttons button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+  }
+  
+  .buttons button:active::after {
+    width: 100px;
+    height: 100px;
   }
 }
 
