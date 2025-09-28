@@ -5,7 +5,7 @@ exports.handler = async function (event) {
     const { question, imageBase64, imageMimeType } = JSON.parse(event.body);
     const { GEMINI_API_KEY } = process.env;
 
-    const modelName = 'gemini-2.5-flash-lite-preview-06-17'; // Using the stable multimodal model
+    const modelName = 'gemini-2.5-flash-lite-preview-09-2025'; // Using the stable multimodal model
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`;
     
     const parts = [{ text: question || "Describe this image in detail." }];
