@@ -1010,3 +1010,11 @@ body {
   color: white;
   transform: translateY(-1px);
 }
+
+.seo-text {
+  position: absolute;
+  left: -9999px; /* moves it way off screen */
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
